@@ -4,11 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useAuth } from "@/components/providers/AuthProvider";
 import Link from "next/link";
 
 export default function NewEquipmentPage() {
-  const { user } = useAuth();
   const router = useRouter();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
@@ -17,10 +15,11 @@ export default function NewEquipmentPage() {
   const [cycleDays, setCycleDays] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user) return;
+    setError("");
     setSaving(true);
     try {
       await addDoc(collection(db, "equipment"), {
@@ -34,6 +33,8 @@ export default function NewEquipmentPage() {
         updatedAt: new Date().toISOString(),
       });
       router.push("/dashboard/equipment");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Không thể thêm thiết bị. Kiểm tra đăng nhập và quyền Firestore.");
     } finally {
       setSaving(false);
     }
@@ -91,6 +92,7 @@ export default function NewEquipmentPage() {
           <label className="block text-sm font-medium text-slate-700 mb-1">Ghi chú</label>
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="w-full rounded-lg border border-slate-300 px-3 py-2" />
         </div>
+        {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
         <div className="flex gap-2">
           <button type="submit" disabled={saving} className="rounded-lg bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 disabled:opacity-50">
             {saving ? "Đang lưu..." : "Thêm thiết bị"}

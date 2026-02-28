@@ -46,6 +46,13 @@ export default function MaterialDetailPage() {
   }, [id]);
 
   useEffect(() => {
+    if (loading || !material) return;
+    if (typeof window !== "undefined" && window.location.hash === "#nhap") {
+      document.getElementById("nhap")?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [loading, material]);
+
+  useEffect(() => {
     if (!id) return;
     const q = query(
       collection(db, "material_transactions"),
@@ -156,7 +163,7 @@ export default function MaterialDetailPage() {
           </p>
         )}
 
-        <div className="mt-6 pt-4 border-t border-slate-200 grid gap-6 sm:grid-cols-2">
+        <div id="nhap" className="mt-6 pt-4 border-t border-slate-200 grid gap-6 sm:grid-cols-2">
           <div className="rounded-lg bg-green-50 p-4">
             <h3 className="font-medium text-green-800 mb-2">Nhập kho (mua/thêm)</h3>
             <form onSubmit={handleIn} className="space-y-2">

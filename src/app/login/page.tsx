@@ -29,9 +29,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-center text-slate-800 mb-2">
+    <div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-br from-slate-100 to-primary-50/40 p-4 safe-area-padding">
+      <div className="w-full max-w-md rounded-2xl bg-white shadow-card-hover p-6 sm:p-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-center text-slate-800 mb-2">
           Quản lý Bảo dưỡng Bảo trì
         </h1>
         <p className="text-center text-slate-500 text-sm mb-6">
@@ -48,7 +48,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 min-h-[48px] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-base"
               placeholder="email@congty.com"
             />
           </div>
@@ -62,16 +62,16 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 min-h-[48px] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-base"
             />
           </div>
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+            <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">{error}</p>
           )}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg bg-primary-600 py-2.5 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+            className="w-full rounded-xl bg-primary-600 py-3.5 min-h-[48px] font-medium text-white hover:bg-primary-700 active:scale-[0.99] disabled:opacity-50"
           >
             {submitting ? "Đang đăng nhập..." : "Đăng nhập"}
           </button>
