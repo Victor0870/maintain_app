@@ -14,12 +14,11 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useAuth } from "@/components/providers/AuthProvider";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useRef } from "react";
 import * as XLSX from "xlsx";
-import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, BorderStyle } from "docx";
+import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
 import type { Job } from "../page";
 import type { WorkOrder } from "../../work-orders/page";
@@ -38,7 +37,6 @@ export default function JobDetailPage() {
   const router = useRouter();
   const printRef = useRef<HTMLDivElement>(null);
   const id = params.id as string;
-  const { user } = useAuth();
   const [job, setJob] = useState<Job | null>(null);
   const [workOrder, setWorkOrder] = useState<WorkOrder | null>(null);
   const [risksList, setRisksList] = useState<RiskItem[]>([]);
