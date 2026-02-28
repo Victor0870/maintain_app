@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Plus, Package } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export interface Material {
   id: string;

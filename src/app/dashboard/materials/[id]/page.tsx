@@ -37,16 +37,12 @@ export default function MaterialDetailPage() {
   const [outJobId, setOutJobId] = useState("");
   const [saving, setSaving] = useState(false);
 
-  function loadMaterial() {
+  useEffect(() => {
     getDoc(doc(db, "materials", id)).then((snap) => {
       if (!snap.exists()) return;
       setMaterial({ id: snap.id, ...snap.data() } as Material);
       setLoading(false);
     });
-  }
-
-  useEffect(() => {
-    loadMaterial();
   }, [id]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 type CreateUserResponse = { uid: string; email: string; message: string } | { error: string };
