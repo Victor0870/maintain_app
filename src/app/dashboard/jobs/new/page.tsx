@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -14,6 +14,7 @@ type MeasureItem = { id: string; label: string };
 export default function NewJobPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [equipmentList, setEquipmentList] = useState<{ id: string; name: string }[]>([]);
   const [risksList, setRisksList] = useState<RiskItem[]>([]);
   const [measuresList, setMeasuresList] = useState<MeasureItem[]>([]);
@@ -32,6 +33,11 @@ export default function NewJobPage() {
   const [measureSearch, setMeasureSearch] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const eqId = searchParams.get("equipmentId");
+    if (eqId) setEquipmentId(eqId);
+  }, [searchParams]);
 
   useEffect(() => {
     getDocs(collection(db, "equipment")).then((snap) => {
@@ -63,31 +69,33 @@ export default function NewJobPage() {
     const eq = equipmentList.find((x) => x.id === equipmentId);
     setSaving(true);
     try {
-      const jobRef = await addDoc(collection(db, "jobs"), {
+      const jobPayload: Record<string, unknown> = {
         title,
-        description: description || undefined,
         status,
-        equipmentId: equipmentId || undefined,
-        equipmentName: eq?.name,
-        assignee: assignee || undefined,
-        location: location || undefined,
-        plannedDate: plannedDate || undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         createdBy: user?.uid ?? "",
-      });
+      };
+      if (description.trim()) jobPayload.description = description.trim();
+      if (equipmentId) jobPayload.equipmentId = equipmentId;
+      if (eq?.name) jobPayload.equipmentName = eq.name;
+      if (assignee.trim()) jobPayload.assignee = assignee.trim();
+      if (location.trim()) jobPayload.location = location.trim();
+      if (plannedDate) jobPayload.plannedDate = plannedDate;
+      const jobRef = await addDoc(collection(db, "jobs"), jobPayload);
       if (woRisks.length > 0 || woMeasures.length > 0 || woApproverName || woApproverSignature || location) {
-        await addDoc(collection(db, "workOrders"), {
+        const woPayload: Record<string, unknown> = {
           jobId: jobRef.id,
           jobTitle: title,
-          location: location || undefined,
           risks: woRisks,
           measures: woMeasures,
-          approverName: woApproverName || undefined,
-          approverSignature: woApproverSignature || undefined,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-        });
+        };
+        if (location.trim()) woPayload.location = location.trim();
+        if (woApproverName?.trim()) woPayload.approverName = woApproverName.trim();
+        if (woApproverSignature?.trim()) woPayload.approverSignature = woApproverSignature.trim();
+        await addDoc(collection(db, "workOrders"), woPayload);
       }
       router.push("/dashboard/jobs");
     } catch (err) {

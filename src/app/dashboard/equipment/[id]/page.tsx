@@ -62,11 +62,12 @@ export default function EquipmentDetailPage() {
 
   async function saveSchedule() {
     if (!equipment) return;
-    await updateDoc(doc(db, "equipment", id), {
-      nextMaintenanceDate: form.nextMaintenanceDate || undefined,
-      cycleDays: form.cycleDays ? parseInt(form.cycleDays, 10) : undefined,
-      updatedAt: new Date().toISOString(),
-    });
+    const payload: Record<string, unknown> = { updatedAt: new Date().toISOString() };
+    if (form.nextMaintenanceDate) payload.nextMaintenanceDate = form.nextMaintenanceDate;
+    else payload.nextMaintenanceDate = null;
+    if (form.cycleDays) payload.cycleDays = parseInt(form.cycleDays, 10);
+    else payload.cycleDays = null;
+    await updateDoc(doc(db, "equipment", id), payload);
     setEquipment((prev) => prev ? { ...prev, nextMaintenanceDate: form.nextMaintenanceDate, cycleDays: form.cycleDays ? parseInt(form.cycleDays, 10) : undefined } : null);
     setEditing(false);
   }
@@ -75,11 +76,11 @@ export default function EquipmentDetailPage() {
     if (!equipment) return;
     await updateDoc(doc(db, "equipment", id), {
       name: form.name,
-      code: form.code || undefined,
-      location: form.location || undefined,
-      nextMaintenanceDate: form.nextMaintenanceDate || undefined,
-      cycleDays: form.cycleDays ? parseInt(form.cycleDays, 10) : undefined,
-      notes: form.notes || undefined,
+      code: form.code.trim() || null,
+      location: form.location.trim() || null,
+      nextMaintenanceDate: form.nextMaintenanceDate || null,
+      cycleDays: form.cycleDays ? parseInt(form.cycleDays, 10) : null,
+      notes: form.notes.trim() || null,
       updatedAt: new Date().toISOString(),
     });
     setEquipment((prev) => prev ? { ...prev, ...form, cycleDays: form.cycleDays ? parseInt(form.cycleDays, 10) : undefined } : null);

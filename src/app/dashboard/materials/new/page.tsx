@@ -19,15 +19,16 @@ export default function NewMaterialPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await addDoc(collection(db, "materials"), {
+      const payload: Record<string, unknown> = {
         name,
-        code: code || undefined,
         unit,
         quantity: parseInt(quantity, 10) || 0,
-        minQuantity: minQuantity ? parseInt(minQuantity, 10) : undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      });
+      };
+      if (code.trim()) payload.code = code.trim();
+      if (minQuantity) payload.minQuantity = parseInt(minQuantity, 10);
+      await addDoc(collection(db, "materials"), payload);
       router.push("/dashboard/materials");
     } finally {
       setSaving(false);

@@ -83,7 +83,7 @@ export default function MaterialDetailPage() {
         materialName: material.name,
         unit: material.unit,
         quantity: qty,
-        note: inNote || undefined,
+        ...(inNote.trim() && { note: inNote.trim() }),
         createdAt: new Date().toISOString(),
       });
       await updateDoc(doc(db, "materials", id), {
@@ -110,17 +110,18 @@ export default function MaterialDetailPage() {
     const job = jobs.find((j) => j.id === outJobId);
     setSaving(true);
     try {
-      await addDoc(collection(db, "material_transactions"), {
+      const outPayload: Record<string, unknown> = {
         type: "out",
         materialId: id,
         materialName: material.name,
         unit: material.unit,
         quantity: qty,
-        note: outJobId ? undefined : (outNote || "Xuất khác"),
-        jobId: outJobId || undefined,
-        jobTitle: job?.title,
+        note: outJobId ? null : (outNote || "Xuất khác"),
         createdAt: new Date().toISOString(),
-      });
+      };
+      if (outJobId) outPayload.jobId = outJobId;
+      if (job?.title) outPayload.jobTitle = job.title;
+      await addDoc(collection(db, "material_transactions"), outPayload);
       await updateDoc(doc(db, "materials", id), {
         quantity: material.quantity - qty,
         updatedAt: new Date().toISOString(),

@@ -22,16 +22,17 @@ export default function NewEquipmentPage() {
     setError("");
     setSaving(true);
     try {
-      await addDoc(collection(db, "equipment"), {
+      const payload: Record<string, unknown> = {
         name,
-        code: code || undefined,
-        location: location || undefined,
-        nextMaintenanceDate: nextMaintenanceDate || undefined,
-        cycleDays: cycleDays ? parseInt(cycleDays, 10) : undefined,
-        notes: notes || undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      });
+      };
+      if (code.trim()) payload.code = code.trim();
+      if (location.trim()) payload.location = location.trim();
+      if (nextMaintenanceDate) payload.nextMaintenanceDate = nextMaintenanceDate;
+      if (cycleDays) payload.cycleDays = parseInt(cycleDays, 10);
+      if (notes.trim()) payload.notes = notes.trim();
+      await addDoc(collection(db, "equipment"), payload);
       router.push("/dashboard/equipment");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Không thể thêm thiết bị. Kiểm tra đăng nhập và quyền Firestore.");
